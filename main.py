@@ -122,7 +122,7 @@ def edit_post(id, title, content, link, post_status, terms_names_post_tag, terms
 def read_md(file_path):
     content = ""
     metadata = {}
-    with open(file_path) as f:
+    with open(file_path, 'r', encoding='utf8') as f:
         post = frontmatter.load(f)
         content = post.content
         metadata = post.metadata
@@ -158,7 +158,7 @@ def get_sha1(filename):
 # 将字典写入文件
 def write_dic_info_to_file(dic_info, file):
     dic_info_str = json.dumps(dic_info)
-    file = open(file, 'w')
+    file = open(file, 'w', encoding='utf8')
     file.write(dic_info_str)
     file.close()
     return True
@@ -166,7 +166,7 @@ def write_dic_info_to_file(dic_info, file):
 
 # 将文件读取为字典格式
 def read_dic_from_file(file):
-    file_byte = open(file, 'r')
+    file_byte = open(file, 'r', encoding='utf8')
     file_info = file_byte.read()
     if not file_info:
         return {}
