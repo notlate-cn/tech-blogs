@@ -161,6 +161,8 @@ def write_dic_info_to_file(dic_info, file):
 def read_dic_from_file(file):
     file_byte = open(file, 'r')
     file_info = file_byte.read()
+    if not file_info:
+        return {}
     dic = json.loads(file_info)
     file_byte.close()
     return dic
