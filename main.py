@@ -133,6 +133,7 @@ def get_md_list(dir_path):
     log.info(f'正在获取本地MD文件列表：{dir_path} ...')
     md_list = []
     dirs = os.listdir(dir_path)
+    log.info(dirs)
     for ds in dirs:
         f_dir_path = os.path.join(dir_path, ds)
         log.info(f'正在查找目录：{f_dir_path}')
