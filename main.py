@@ -89,7 +89,7 @@ def create_post_obj(title, content, link, post_status, terms_names_post_tag, ter
 
 # 新建文章
 def new_post(title, content, link, post_status, terms_names_post_tag, terms_names_category):
-    post_obj = create_post_obj(title=link,
+    post_obj = create_post_obj(title=title,
                                content=content,
                                link=link,
                                post_status=post_status,
@@ -113,7 +113,7 @@ def new_post(title, content, link, post_status, terms_names_post_tag, terms_name
 
 # 更新文章
 def edit_post(id, title, content, link, post_status, terms_names_post_tag, terms_names_category):
-    post_obj = create_post_obj(title=link,
+    post_obj = create_post_obj(title=title,
                                content=content,
                                link=link,
                                post_status=post_status,
