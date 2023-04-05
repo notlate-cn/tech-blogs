@@ -210,7 +210,7 @@ def post_link_id_list_2_link_id_dic(post_link_id_list):
 
 
 def href_info(link):
-    return "<br/><br/><br/>\n\n\n\n#### 本文永久更新地址: [" + link + "](" + link + ")"
+    return "<br/><br/><br/>\n\n\n\n本文永久更新地址: [" + link + "](" + link + ")"
 
 
 # 在README.md中插入信息文章索引信息，更容易获取google的收录
