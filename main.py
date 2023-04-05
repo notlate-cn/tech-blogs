@@ -123,8 +123,8 @@ def read_md(file_path):
         post = frontmatter.load(f)
         content = post.content
         metadata = post.metadata
-        # print("==>>", post.content)
-        # print("===>>", post.metadata)
+        log.info(f"post.content ==>> {post.content}")
+        log.info(f"post.metadata ===>> {post.metadata}")
     return content, metadata
 
 
