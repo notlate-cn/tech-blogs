@@ -263,10 +263,10 @@ def insert_index_info_in_readme():
         md_maps[d0][d1].append(md)
 
     for d0, d1_maps in md_maps.items():
-        insert_info = f'{insert_info}##{d0}{os.linesep * 2}'
+        insert_info = f'{insert_info}## {d0}{os.linesep * 2}'
         for d1, mds in d1_maps.items():
             if d1:
-                insert_info = f'{insert_info}###{d1}{os.linesep * 1}'
+                insert_info = f'{insert_info}### {d1}{os.linesep * 1}'
             for md in mds:
                 (content, metadata) = read_md(md)
                 title = metadata.get("title", "")
