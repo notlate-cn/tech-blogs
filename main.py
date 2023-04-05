@@ -272,6 +272,7 @@ def insert_index_info_in_readme():
                 title = metadata.get("title", "")
                 url = post_url(os.path.basename(md).split(".")[0])
                 insert_info = f'{insert_info}[{title}]({url}){os.linesep * 1}'
+        insert_info = f'{insert_info}{os.linesep * 2}'
 
     # 替换 ---start--- 到 ---end--- 之间的内容
     insert_info = "---start---\n## 目录(" + time.strftime('%Y年%m月%d日') + "更新)" + "\n" + insert_info + "---end---"
