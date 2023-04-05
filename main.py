@@ -1,3 +1,4 @@
+import glob
 import json
 import os
 import re
@@ -14,6 +15,10 @@ from wordpress_xmlrpc.methods.posts import GetPosts, NewPost, EditPost
 from logger import Logger
 
 log = Logger()
+BASE_PATH = os.getcwd()
+POST_PATH = os.path.join(BASE_PATH, "_posts")
+SHA1_PATH = os.path.join(BASE_PATH, ".md_sha1")
+README_PATH = os.path.join(BASE_PATH, "README.md")
 config_file_txt = ""
 
 if os.path.exists(os.path.join(os.getcwd(), "diy_config.txt")):
@@ -43,10 +48,12 @@ except:
     log.error("无法获取github的secrets配置信息,开始使用本地变量")
 
 url_info = urlparse(xmlrpc_php)
-
 domain_name = url_info.netloc
-
 wp = Client(xmlrpc_php, username, password)
+
+
+def post_url(link):
+    return f'https://{domain_name}/p/{link}/'
 
 
 # 获取已发布文章id列表
@@ -82,13 +89,12 @@ def create_post_obj(title, content, link, post_status, terms_names_post_tag, ter
 
 # 新建文章
 def new_post(title, content, link, post_status, terms_names_post_tag, terms_names_category):
-    post_obj = create_post_obj(
-        title=link,
-        content=content,
-        link=link,
-        post_status=post_status,
-        terms_names_post_tag=terms_names_post_tag,
-        terms_names_category=terms_names_category)
+    post_obj = create_post_obj(title=link,
+                               content=content,
+                               link=link,
+                               post_status=post_status,
+                               terms_names_post_tag=terms_names_post_tag,
+                               terms_names_category=terms_names_category)
     log.info(f'正在发布文章：{title}, 链接为：{link} ...')
     try:
         # 先获取id
@@ -107,21 +113,18 @@ def new_post(title, content, link, post_status, terms_names_post_tag, terms_name
 
 # 更新文章
 def edit_post(id, title, content, link, post_status, terms_names_post_tag, terms_names_category):
-    post_obj = create_post_obj(
-        title,
-        content,
-        link,
-        post_status,
-        terms_names_post_tag,
-        terms_names_category)
+    post_obj = create_post_obj(title=link,
+                               content=content,
+                               link=link,
+                               post_status=post_status,
+                               terms_names_post_tag=terms_names_post_tag,
+                               terms_names_category=terms_names_category)
     res = wp.call(EditPost(id, post_obj))
     log.info(f'更新文章：{title}，结果：{res}')
 
 
 # 获取markdown文件中的内容
 def read_md(file_path):
-    content = ""
-    metadata = {}
     with open(file_path, 'r', encoding='utf8') as f:
         post = frontmatter.load(f)
         content = post.content
@@ -131,17 +134,26 @@ def read_md(file_path):
 
 
 # 获取特定目录的markdown文件列表
+# def get_md_list(dir_path):
+#     log.info(f'正在获取本地MD文件列表：{dir_path} ...')
+#     md_list = []
+#     dirs = os.listdir(dir_path)
+#     for ds in dirs:
+#         f_dir_path = os.path.join(dir_path, ds)
+#         if not os.path.isdir(f_dir_path):
+#             continue
+#         for i in os.listdir(f_dir_path):
+#             if os.path.splitext(i)[1] == ".md":
+#                 md_list.append(os.path.join(f_dir_path, i))
+#     log.info(f'MD文章列表：{md_list}')
+#     return md_list
+
+
 def get_md_list(dir_path):
     log.info(f'正在获取本地MD文件列表：{dir_path} ...')
-    md_list = []
-    dirs = os.listdir(dir_path)
-    for ds in dirs:
-        f_dir_path = os.path.join(dir_path, ds)
-        if not os.path.isdir(f_dir_path):
-            continue
-        for i in os.listdir(f_dir_path):
-            if os.path.splitext(i)[1] == ".md":
-                md_list.append(os.path.join(f_dir_path, i))
+    md_l1 = glob.glob(f'{dir_path}/*/*.md')
+    md_l2 = glob.glob(f'{dir_path}/*/*/*.md')
+    md_list = md_l1 + md_l2
     log.info(f'MD文章列表：{md_list}')
     return md_list
 
@@ -157,6 +169,7 @@ def get_sha1(filename):
 
 # 将字典写入文件
 def write_dic_info_to_file(dic_info, file):
+    dic_info["update_time"] = time.strftime('%Y-%m-%d-%H-%M-%S')
     log.error(dic_info)
     dic_info_str = json.dumps(dic_info)
     file = open(file, 'wt', encoding='utf8')
@@ -186,23 +199,31 @@ def get_md_sha1_dic(file):
     return result
 
 
-# 重建md_sha1_dic,将结果写入.md_sha1
-def rebuild_md_sha1_dic(file, md_dir):
-    md_sha1_dic = {}
+# # 重建md_sha1_dic,将结果写入.md_sha1
+# def rebuild_md_sha1_dic(file, md_dir):
+#     md_sha1_dic = {}
+#
+#     md_list = get_md_list(md_dir)
+#
+#     for md in md_list:
+#         key = os.path.basename(md).split(".")[0]
+#         value = get_sha1(md)
+#         md_sha1_dic[key] = {
+#             "hash_value": value,
+#             "file_name": key,
+#             "encode_file_name": urllib.parse.quote(key, safe='').lower()
+#         }
+#
+#     md_sha1_dic["update_time"] = time.strftime('%Y-%m-%d-%H-%M-%S')
+#     write_dic_info_to_file(md_sha1_dic, file)
 
-    md_list = get_md_list(md_dir)
 
-    for md in md_list:
-        key = os.path.basename(md).split(".")[0]
-        value = get_sha1(md)
-        md_sha1_dic[key] = {
-            "hash_value": value,
-            "file_name": key,
-            "encode_file_name": urllib.parse.quote(key, safe='').lower()
-        }
-
-    md_sha1_dic["update_time"] = time.strftime('%Y-%m-%d-%H-%M-%S')
-    write_dic_info_to_file(md_sha1_dic, file)
+def update_md_sha1_dict(sha1_dict, file_name, sha1_value):
+    sha1_dict[file_name] = {
+        "hash_value": sha1_value,
+        "file_name": file_name,
+        "encode_file_name": urllib.parse.quote(file_name, safe='').lower()
+    }
 
 
 def post_link_id_list_2_link_id_dic(post_link_id_list):
@@ -213,31 +234,53 @@ def post_link_id_list_2_link_id_dic(post_link_id_list):
 
 
 def href_info(link):
-    return "<br/><br/><br/>\n\n\n\n本文永久更新地址: [" + link + "](" + link + ")"
+    return f'<br/><br/><br/>\n\n\n\n本文永久更新地址: [{link}]({link})'
+
+
+def parse_dir(path, base_path, name):
+    path = path.replace(base_path, '').split(name)[0]
+    path = path.strip('/')
+    dirs = path.split('/')
+    if len(dirs) == 1:
+        return dirs[0], ''
+    return dirs[0], dirs[1]
 
 
 # 在README.md中插入信息文章索引信息，更容易获取google的收录
 def insert_index_info_in_readme():
     # 获取_posts下所有markdown文件
-    md_list = get_md_list(os.path.join(os.getcwd(), "_posts"))
+    md_list = get_md_list(POST_PATH)
     # 生成插入列表
     insert_info = ""
     md_list.sort(reverse=True)
-    # 读取md_list中的文件标题
+    md_maps = {}
     for md in md_list:
-        (content, metadata) = read_md(md)
-        title = metadata.get("title", "")
-        insert_info = insert_info + "[" + title + "](" + "https://" + domain_name + "/p/" + \
-                      os.path.basename(md).split(".")[0] + "/" + ")\n\n"
-    # 替换 ---start--- 到 ---end--- 之间的内容
+        d0, d1 = parse_dir(md, POST_PATH, os.path.basename(md).split(".")[0])
+        if d0 not in md_maps:
+            md_maps[d0] = {}
+        if d1 not in md_maps[d0]:
+            md_maps[d0][d1] = []
+        md_maps[d0][d1].append(md)
 
+    for d0, d1_maps in md_maps.items():
+        insert_info = f'{insert_info}##{d0}{os.linesep * 2}'
+        for d1, mds in d1_maps.items():
+            if d1:
+                insert_info = f'{insert_info}###{d1}{os.linesep * 1}'
+            for md in mds:
+                (content, metadata) = read_md(md)
+                title = metadata.get("title", "")
+                url = post_url(os.path.basename(md).split(".")[0])
+                insert_info = f'{insert_info}[{title}]({url}){os.linesep * 1}'
+
+    # 替换 ---start--- 到 ---end--- 之间的内容
     insert_info = "---start---\n## 目录(" + time.strftime('%Y年%m月%d日') + "更新)" + "\n" + insert_info + "---end---"
 
     # 获取README.md内容
-    with open(os.path.join(os.getcwd(), "README.md"), 'r', encoding='utf-8') as f:
+    with open(README_PATH, 'r', encoding='utf-8') as f:
         readme_md_content = f.read()
 
-    print(insert_info)
+    log.info(insert_info)
 
     if readme_md_content:
         new_readme_md_content = re.sub(r'---start---(.|\n)*---end---', insert_info, readme_md_content)
@@ -245,12 +288,8 @@ def insert_index_info_in_readme():
         new_readme_md_content = insert_info
 
     log.info(f'new_readme_md_content: {new_readme_md_content}')
-
-    with open(os.path.join(os.getcwd(), "README.md"), 'w', encoding='utf-8') as f:
+    with open(README_PATH, 'w', encoding='utf-8') as f:
         f.write(new_readme_md_content)
-
-    print("==new_readme_md_content==>>", new_readme_md_content)
-
     return True
 
 
@@ -262,19 +301,19 @@ def main():
     # 查看目录下是否存在md_sha1.txt,如果存在则读取内容；
     # 如果不存在则创建md_sha1.txt,内容初始化为{}，并读取其中的内容；
     # 将读取的字典内容变量名，设置为 md_sha1_dic
-    md_sha1_dic = get_md_sha1_dic(os.path.join(os.getcwd(), ".md_sha1"))
+    md_sha1_dic = get_md_sha1_dic(SHA1_PATH)
 
     # 3. 开始同步
     # 读取_posts目录中的md文件列表
-    md_list = get_md_list(os.path.join(os.getcwd(), "_posts"))
+    md_list = get_md_list(POST_PATH)
 
     for md in md_list:
         # 计算md文件的sha1值，并与md_sha1_dic做对比
-        sha1_key = os.path.basename(md).split(".")[0]
+        file_name = os.path.basename(md).split(".")[0]
         sha1_value = get_sha1(md)
         # 如果sha1与md_sha1_dic中记录的相同，则打印：XX文件无需同步;
-        if ((sha1_key in md_sha1_dic.keys()) and ("hash_value" in md_sha1_dic[sha1_key]) and (
-                sha1_value == md_sha1_dic[sha1_key]["hash_value"])):
+        if ((file_name in md_sha1_dic.keys()) and ("hash_value" in md_sha1_dic[file_name]) and (
+                sha1_value == md_sha1_dic[file_name]["hash_value"])):
             log.info(md + "无需同步")
         # 如果sha1与md_sha1_dic中记录的不同，则开始同步
         else:
@@ -285,11 +324,11 @@ def main():
             terms_names_post_tag = metadata.get("tags", domain_name)
             terms_names_category = metadata.get("categories", domain_name)
             post_status = "publish"
-            link = sha1_key  # urllib.parse.quote(sha1_key, safe='').lower()
-            content = markdown.markdown(content + href_info("https://" + domain_name + "/p/" + link + "/"),
-                                        extensions=['tables', 'fenced_code'])
+            link = file_name
+
+            content = markdown.markdown(content + href_info(post_url(link)), extensions=['tables', 'fenced_code'])
             # 如果文章无id,则直接新建
-            if not ("https://" + domain_name + "/p/" + link + "/" in link_id_dic.keys()):
+            if not (post_url(link) in link_id_dic.keys()):
                 new_post(title, content, link, post_status, terms_names_post_tag, terms_names_category)
                 log.info("new_post==>>", {
                     "title": title,
@@ -302,7 +341,7 @@ def main():
             # 如果文章有id, 则更新文章
             else:
                 # 获取id
-                id = link_id_dic["https://" + domain_name + "/p/" + link + "/"]
+                id = link_id_dic[post_url(link)]
                 edit_post(id, title, content, link, post_status, terms_names_post_tag, terms_names_category)
 
                 log.info("edit_post==>>", {
@@ -315,8 +354,10 @@ def main():
                     "terms_names_category": terms_names_category
                 })
 
+            update_md_sha1_dict(md_sha1_dic, file_name, sha1_value)
+
     # 4. 重建md_sha1_dic
-    rebuild_md_sha1_dic(os.path.join(os.getcwd(), ".md_sha1"), os.path.join(os.getcwd(), "_posts"))
+    write_dic_info_to_file(md_sha1_dic, SHA1_PATH)
     # 5. 将链接信息写入insert_index_info_in_readme
     insert_index_info_in_readme()
 
