@@ -1,12 +1,16 @@
 ---start---
 ## 目录(2023年04月05日更新)
-## Review
+## 03-MachineLearning(机器学习)
 
-[智源研究院-2020年AI进展及2021年趋势关注重点笔记](https://notlate.cn/p/01-智源人工智能2021年技术趋势记录/)
+### 02-Summaries
+
+[智源研究院-2020年AI进展及2021年趋势关注重点笔记](https://notlate.cn/p/001-智源人工智能2021年技术趋势记录/)
 
 
 
-## RecSys
+## 02-RecommendationSystem(推荐系统)
+
+### Notes(读书笔记)
 
 [深度学习推荐系统-笔记13：探究业界主流的推荐系统解决方案](https://notlate.cn/p/推荐系统笔记13-业界经典的推荐实践/)
 
@@ -36,7 +40,9 @@
 
 
 
-## ComputationalAds
+## 01-ComputationalAd(计算广告)
+
+### 03-Notes(读书笔记)
 
 [计算广告-笔记16：其他广告相关技术](https://notlate.cn/p/计算广告笔记16-其他广告相关技术/)
 
