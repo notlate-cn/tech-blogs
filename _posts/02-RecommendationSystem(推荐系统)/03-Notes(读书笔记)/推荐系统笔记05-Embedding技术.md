@@ -1,10 +1,10 @@
 ---
-title: 深度学习推荐系统-笔记05：Embedding技术
+title: 推荐系统-笔记05：Embedding技术
 tags:
   - Embedding
 comments: true
 categories:
-  - 深度学习推荐系统
+  - 推荐系统
 mathjax: true
 abbrlink: ba149af9
 date: 2021-01-05 21:02:30
