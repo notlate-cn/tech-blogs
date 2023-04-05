@@ -4,7 +4,7 @@ import re
 import time
 import urllib.parse
 from hashlib import sha1
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 
 import frontmatter
 import markdown
@@ -57,7 +57,7 @@ def get_posts():
     for post in posts:
         post_link_id_list.append({
             "id": post.id,
-            "link": post.link
+            "link": unquote(post.link)
         })
     log.info(f'获取服务器文章完成，共：{len(post_link_id_list)}，文章列表为：{post_link_id_list}')
     return post_link_id_list
