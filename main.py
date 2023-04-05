@@ -212,7 +212,7 @@ def parse_dir(path, base_path, name):
 
 
 # 在README.md中插入信息文章索引信息，更容易获取google的收录
-def insert_index_info_in_readme():
+def insert_index_info_in_readme(link_id_dic):
     # 获取_posts下所有markdown文件
     md_list = get_md_list(POST_PATH)
     # 生成插入列表
@@ -235,7 +235,11 @@ def insert_index_info_in_readme():
             for md in mds:
                 (content, metadata) = read_md(md)
                 title = metadata.get("title", "")
-                url = post_url(os.path.basename(md).split(".")[0])
+                link = os.path.basename(md).split(".")[0]
+                if link not in link_id_dic:
+                    log.error(f'没找到 {link} 的文章ID')
+                    continue
+                url = post_url(link_id_dic[link])
                 insert_info = f'{insert_info}[{title}]({url}){os.linesep * 2}'
         insert_info = f'{insert_info}{os.linesep * 2}'
 
@@ -291,7 +295,7 @@ def main():
             terms_names_post_tag = metadata.get("tags", domain_name)
             terms_names_category = metadata.get("categories", domain_name)
             post_status = "publish"
-            link = title
+            link = file_name
 
             content = markdown.markdown(content + href_info(post_url(link)), extensions=['tables', 'fenced_code'])
             # 如果文章无id,则直接新建
@@ -323,11 +327,12 @@ def main():
 
             if post_id:
                 update_md_sha1_dict(md_sha1_dic, file_name, sha1_value)
+                link_id_dic[link] = post_id
 
     # 4. 重建md_sha1_dic
     write_dic_info_to_file(md_sha1_dic, SHA1_PATH)
     # 5. 将链接信息写入insert_index_info_in_readme
-    insert_index_info_in_readme()
+    insert_index_info_in_readme(link_id_dic)
 
 
 main()
