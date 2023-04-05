@@ -99,16 +99,11 @@ def new_post(title, content, link, post_status, terms_names_post_tag, terms_name
     try:
         # 先获取id
         id = wp.call(NewPost(post_obj))
-        # 再通过EditPost更新信息
-        edit_post(id, title,
-                  content,
-                  link,
-                  post_status,
-                  terms_names_post_tag,
-                  terms_names_category)
         log.info(f'发布文章完成：{title}')
     except:
+        id = None
         log.info(f'发布文章失败：{title}')
+    return id
 
 
 # 更新文章
@@ -119,8 +114,13 @@ def edit_post(id, title, content, link, post_status, terms_names_post_tag, terms
                                post_status=post_status,
                                terms_names_post_tag=terms_names_post_tag,
                                terms_names_category=terms_names_category)
-    res = wp.call(EditPost(id, post_obj))
-    log.info(f'更新文章：{title}，结果：{res}')
+    try:
+        res = wp.call(EditPost(id, post_obj))
+        log.info(f'更新文章成功：{title}，结果：{res}')
+    except:
+        id = None
+        log.info(f'更新文章失败：{title}')
+    return id
 
 
 # 获取markdown文件中的内容
@@ -131,22 +131,6 @@ def read_md(file_path):
         metadata = post.metadata
         log.info(f"post.metadata ===>> {post.metadata}")
     return content, metadata
-
-
-# 获取特定目录的markdown文件列表
-# def get_md_list(dir_path):
-#     log.info(f'正在获取本地MD文件列表：{dir_path} ...')
-#     md_list = []
-#     dirs = os.listdir(dir_path)
-#     for ds in dirs:
-#         f_dir_path = os.path.join(dir_path, ds)
-#         if not os.path.isdir(f_dir_path):
-#             continue
-#         for i in os.listdir(f_dir_path):
-#             if os.path.splitext(i)[1] == ".md":
-#                 md_list.append(os.path.join(f_dir_path, i))
-#     log.info(f'MD文章列表：{md_list}')
-#     return md_list
 
 
 def get_md_list(dir_path):
@@ -197,25 +181,6 @@ def get_md_sha1_dic(file):
     else:
         write_dic_info_to_file({}, file)
     return result
-
-
-# # 重建md_sha1_dic,将结果写入.md_sha1
-# def rebuild_md_sha1_dic(file, md_dir):
-#     md_sha1_dic = {}
-#
-#     md_list = get_md_list(md_dir)
-#
-#     for md in md_list:
-#         key = os.path.basename(md).split(".")[0]
-#         value = get_sha1(md)
-#         md_sha1_dic[key] = {
-#             "hash_value": value,
-#             "file_name": key,
-#             "encode_file_name": urllib.parse.quote(key, safe='').lower()
-#         }
-#
-#     md_sha1_dic["update_time"] = time.strftime('%Y-%m-%d-%H-%M-%S')
-#     write_dic_info_to_file(md_sha1_dic, file)
 
 
 def update_md_sha1_dict(sha1_dict, file_name, sha1_value):
@@ -313,8 +278,9 @@ def main():
         file_name = os.path.basename(md).split(".")[0]
         sha1_value = get_sha1(md)
         # 如果sha1与md_sha1_dic中记录的相同，则打印：XX文件无需同步;
-        if ((file_name in md_sha1_dic.keys()) and ("hash_value" in md_sha1_dic[file_name]) and (
-                sha1_value == md_sha1_dic[file_name]["hash_value"])):
+        if ((file_name in md_sha1_dic.keys()) and
+                ("hash_value" in md_sha1_dic[file_name]) and
+                (sha1_value == md_sha1_dic[file_name]["hash_value"])):
             log.info(md + "无需同步")
         # 如果sha1与md_sha1_dic中记录的不同，则开始同步
         else:
@@ -330,7 +296,7 @@ def main():
             content = markdown.markdown(content + href_info(post_url(link)), extensions=['tables', 'fenced_code'])
             # 如果文章无id,则直接新建
             if not (post_url(link) in link_id_dic.keys()):
-                new_post(title, content, link, post_status, terms_names_post_tag, terms_names_category)
+                post_id = new_post(title, content, link, post_status, terms_names_post_tag, terms_names_category)
                 log.info("new_post==>>", {
                     "title": title,
                     "content": content,
@@ -343,7 +309,7 @@ def main():
             else:
                 # 获取id
                 id = link_id_dic[post_url(link)]
-                edit_post(id, title, content, link, post_status, terms_names_post_tag, terms_names_category)
+                post_id = edit_post(id, title, content, link, post_status, terms_names_post_tag, terms_names_category)
 
                 log.info("edit_post==>>", {
                     "id": id,
@@ -355,7 +321,8 @@ def main():
                     "terms_names_category": terms_names_category
                 })
 
-            update_md_sha1_dict(md_sha1_dic, file_name, sha1_value)
+            if post_id:
+                update_md_sha1_dict(md_sha1_dic, file_name, sha1_value)
 
     # 4. 重建md_sha1_dic
     write_dic_info_to_file(md_sha1_dic, SHA1_PATH)
