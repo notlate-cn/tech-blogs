@@ -266,12 +266,12 @@ def insert_index_info_in_readme():
         insert_info = f'{insert_info}## {d0}{os.linesep * 2}'
         for d1, mds in d1_maps.items():
             if d1:
-                insert_info = f'{insert_info}### {d1}{os.linesep * 1}'
+                insert_info = f'{insert_info}### {d1}{os.linesep * 2}'
             for md in mds:
                 (content, metadata) = read_md(md)
                 title = metadata.get("title", "")
                 url = post_url(os.path.basename(md).split(".")[0])
-                insert_info = f'{insert_info}[{title}]({url}){os.linesep * 1}'
+                insert_info = f'{insert_info}[{title}]({url}){os.linesep * 2}'
         insert_info = f'{insert_info}{os.linesep * 2}'
 
     # 替换 ---start--- 到 ---end--- 之间的内容
