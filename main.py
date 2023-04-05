@@ -135,6 +135,7 @@ def get_md_list(dir_path):
     dirs = os.listdir(dir_path)
     for ds in dirs:
         f_dir_path = os.path.join(dir_path, ds)
+        log.info(f'正在查找目录：{f_dir_path}')
         if not os.path.isdir(f_dir_path):
             continue
         for i in os.listdir(f_dir_path):
