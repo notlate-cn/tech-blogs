@@ -252,7 +252,6 @@ def insert_index_info_in_readme():
     md_list = get_md_list(POST_PATH)
     # 生成插入列表
     insert_info = ""
-    md_list.sort(reverse=True)
     md_maps = {}
     for md in md_list:
         d0, d1 = parse_dir(md, POST_PATH, os.path.basename(md).split(".")[0])
@@ -267,6 +266,7 @@ def insert_index_info_in_readme():
         for d1, mds in d1_maps.items():
             if d1:
                 insert_info = f'{insert_info}### {d1}{os.linesep * 2}'
+            mds.sort(reverse=True)
             for md in mds:
                 (content, metadata) = read_md(md)
                 title = metadata.get("title", "")
