@@ -90,16 +90,19 @@ def new_post(title, content, link, post_status, terms_names_post_tag, terms_name
         terms_names_post_tag=terms_names_post_tag,
         terms_names_category=terms_names_category)
     log.info(f'正在发布文章：{title}, 链接为：{link} ...')
-    # 先获取id
-    id = wp.call(NewPost(post_obj))
-    # 再通过EditPost更新信息
-    edit_post(id, title,
-              content,
-              link,
-              post_status,
-              terms_names_post_tag,
-              terms_names_category)
-    log.info(f'发布文章完成：{title}')
+    try:
+        # 先获取id
+        id = wp.call(NewPost(post_obj))
+        # 再通过EditPost更新信息
+        edit_post(id, title,
+                  content,
+                  link,
+                  post_status,
+                  terms_names_post_tag,
+                  terms_names_category)
+        log.info(f'发布文章完成：{title}')
+    except:
+        log.info(f'发布文章失败：{title}')
 
 
 # 更新文章
@@ -123,7 +126,6 @@ def read_md(file_path):
         post = frontmatter.load(f)
         content = post.content
         metadata = post.metadata
-        log.info(f"post.content ==>> {post.content}")
         log.info(f"post.metadata ===>> {post.metadata}")
     return content, metadata
 
