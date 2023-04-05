@@ -130,11 +130,14 @@ def read_md(file_path):
 
 # 获取特定目录的markdown文件列表
 def get_md_list(dir_path):
+    log.info(f'正在获取本地MD文件列表：{dir_path} ...')
     md_list = []
     dirs = os.listdir(dir_path)
-    for i in dirs:
-        if os.path.splitext(i)[1] == ".md":
-            md_list.append(os.path.join(dir_path, i))
+    for ds in dirs:
+        f_dir_path = os.path.join(dir_path, ds)
+        for i in os.listdir(f_dir_path):
+            if os.path.splitext(i)[1] == ".md":
+                md_list.append(os.path.join(f_dir_path, i))
     log.info(f'MD文章列表：{md_list}')
     return md_list
 
@@ -169,7 +172,6 @@ def read_dic_from_file(file):
 
 
 # 获取md_sha1_dic
-
 def get_md_sha1_dic(file):
     result = {}
     if os.path.exists(file):
