@@ -157,8 +157,9 @@ def get_sha1(filename):
 
 # 将字典写入文件
 def write_dic_info_to_file(dic_info, file):
+    log.error(dic_info)
     dic_info_str = json.dumps(dic_info)
-    file = open(file, 'w', encoding='utf8')
+    file = open(file, 'wt', encoding='utf8')
     file.write(dic_info_str)
     file.close()
     return True
@@ -166,7 +167,7 @@ def write_dic_info_to_file(dic_info, file):
 
 # 将文件读取为字典格式
 def read_dic_from_file(file):
-    file_byte = open(file, 'r', encoding='utf8')
+    file_byte = open(file, 'rt', encoding='utf8')
     file_info = file_byte.read()
     if not file_info:
         return {}
