@@ -239,7 +239,10 @@ def insert_index_info_in_readme():
 
     print(insert_info)
 
-    new_readme_md_content = re.sub(r'---start---(.|\n)*---end---', insert_info, readme_md_content)
+    if readme_md_content:
+        new_readme_md_content = re.sub(r'---start---(.|\n)*---end---', insert_info, readme_md_content)
+    else:
+        new_readme_md_content = insert_info
 
     log.info(f'new_readme_md_content: {new_readme_md_content}')
 
