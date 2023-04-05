@@ -291,7 +291,7 @@ def main():
             terms_names_post_tag = metadata.get("tags", domain_name)
             terms_names_category = metadata.get("categories", domain_name)
             post_status = "publish"
-            link = file_name
+            link = title
 
             content = markdown.markdown(content + href_info(post_url(link)), extensions=['tables', 'fenced_code'])
             # 如果文章无id,则直接新建
