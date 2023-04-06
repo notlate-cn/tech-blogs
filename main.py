@@ -143,7 +143,7 @@ def get_sha1(filename):
 def title_to_abbrlink(title: str):
     sha1_obj = sha1()
     sha1_obj.update(title.encode('utf8'))
-    return sha1_obj.hexdigest()
+    return sha1_obj.hexdigest()[:16]
 
 
 # 将字典写入文件
