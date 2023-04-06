@@ -236,10 +236,7 @@ def insert_index_info_in_readme(link_id_dic):
             for md in mds:
                 (content, metadata) = read_md(md)
                 title = metadata.get("title", "")
-                link = os.path.basename(md).split(".")[0]
-                if link not in link_id_dic:
-                    log.error(f'没找到 {link} 的文章ID')
-                    continue
+                link = title
                 url = post_url(link_id_dic[link])
                 insert_info = f'{insert_info}[{title}]({url}){os.linesep * 2}'
         insert_info = f'{insert_info}{os.linesep * 2}'
