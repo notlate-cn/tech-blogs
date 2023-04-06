@@ -140,9 +140,9 @@ def get_sha1(filename):
     return result
 
 
-def title_to_abbrlink(title):
+def title_to_abbrlink(title: str):
     sha1_obj = sha1()
-    sha1_obj.update(title)
+    sha1_obj.update(title.encode('utf8'))
     return sha1_obj.hexdigest()
 
 
