@@ -74,7 +74,7 @@ def create_post_obj(post_md):
     post_obj = WordPressPost()
     post_obj.title = post_md.metadata.get('title')
     post_obj.content = post_md.content
-    post_obj.slug = post_md.metadata.get('slug', post_obj.title)
+    post_obj.slug = post_md.metadata.get('slug')
     post_obj.post_status = post_md.metadata.get('post_status', 'publish')
     post_obj.comment_status = "open"
     if 'date' in post_md.metadata:
@@ -138,6 +138,12 @@ def get_sha1(filename):
         sha1_obj.update(f.read())
     result = sha1_obj.hexdigest()
     return result
+
+
+def title_to_abbrlink(title):
+    sha1_obj = sha1()
+    sha1_obj.update(title)
+    return sha1_obj.hexdigest()
 
 
 # 将字典写入文件
@@ -223,7 +229,7 @@ def insert_index_info_in_readme():
             for md in mds:
                 post_md = read_md(md)
                 title = post_md.metadata.get("title", "")
-                slug = title
+                slug = title_to_abbrlink(title)
                 insert_info = f'{insert_info}[{title}]({post_url(slug)}){os.linesep * 2}'
         insert_info = f'{insert_info}{os.linesep * 2}'
 
@@ -264,9 +270,9 @@ def main():
         # 读取md文件信息
         post_md = read_md(md)
         # 获取title
-        slug = post_md.metadata.get("slug", "")
-        if not slug:
-            slug = post_md.metadata.get('title', '')
+        title = post_md.metadata.get("title")
+        slug = title_to_abbrlink(title)
+        post_md.metadata['slug'] = slug
         # 如果sha1与md_sha1_dic中记录的相同，则打印：XX文件无需同步;
         if ((slug in md_sha1_dic.keys()) and
                 ("hash_value" in md_sha1_dic[slug]) and
