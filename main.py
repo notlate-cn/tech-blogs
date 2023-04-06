@@ -3,9 +3,8 @@ import json
 import os
 import re
 import time
-import urllib.parse
 from hashlib import sha1
-from urllib.parse import urlparse, unquote
+from urllib.parse import urlparse
 
 import frontmatter
 import markdown
@@ -52,52 +51,48 @@ domain_name = url_info.netloc
 wp = Client(xmlrpc_php, username, password)
 
 
-def post_url(link):
-    return f'https://{domain_name}/p/{link}/'
+def post_url(slug):
+    return f'https://{domain_name}/p/{slug}/'
 
 
 # 获取已发布文章id列表
 def get_posts():
     log.info('正在获取服务器文章列表...')
     posts = wp.call(GetPosts({'post_type': 'post', 'number': 1000000000}))
-    post_link_id_list = []
+    post_slug_id_list = []
     for post in posts:
-        post_link_id_list.append({
+        post_slug_id_list.append({
             "id": post.id,
-            "link": unquote(post.link)
+            "slug": post.slug
         })
-    log.info(f'获取服务器文章完成，共：{len(post_link_id_list)}')
-    return post_link_id_list
+    log.info(f'获取服务器文章完成，共：{len(post_slug_id_list)}')
+    return post_slug_id_list
 
 
 # 创建post对象
-def create_post_obj(title, content, link, post_status, terms_names_post_tag, terms_names_category):
+def create_post_obj(post_md):
     post_obj = WordPressPost()
-    post_obj.title = title
-    post_obj.content = content
-    post_obj.link = link
-    post_obj.post_status = post_status
+    post_obj.title = post_md.metadata.get('title')
+    post_obj.content = post_md.content
+    post_obj.slug = post_md.metadata.get('slug', post_obj.title)
+    post_obj.post_status = post_md.metadata.get('post_status', 'publish')
     post_obj.comment_status = "open"
+    if 'date' in post_md.metadata:
+        post_obj.date = post_md.metadata.get('date')
     post_obj.terms_names = {
         # 文章所属标签，没有则自动创建
-        'post_tag': terms_names_post_tag,
+        'post_tag': post_md.metadata.get("tags", ''),
         # 文章所属分类，没有则自动创建
-        'category': terms_names_category
+        'category': post_md.metadata.get("categories", '')
     }
     return post_obj
 
 
 # 新建文章
-def new_post(title, content, link, post_status, terms_names_post_tag, terms_names_category):
-    post_obj = create_post_obj(title=title,
-                               content=content,
-                               link=link,
-                               post_status=post_status,
-                               terms_names_post_tag=terms_names_post_tag,
-                               terms_names_category=terms_names_category)
-    log.info(f'正在发布文章：{title}, 链接为：{link} ...')
+def new_post(post_md):
+    post_obj = create_post_obj(post_md)
+    title = post_md.metadata.get("title")
     try:
-        # 先获取id
         id = wp.call(NewPost(post_obj))
         log.info(f'发布文章完成：{title}')
     except:
@@ -107,13 +102,9 @@ def new_post(title, content, link, post_status, terms_names_post_tag, terms_name
 
 
 # 更新文章
-def edit_post(id, title, content, link, post_status, terms_names_post_tag, terms_names_category):
-    post_obj = create_post_obj(title=title,
-                               content=content,
-                               link=link,
-                               post_status=post_status,
-                               terms_names_post_tag=terms_names_post_tag,
-                               terms_names_category=terms_names_category)
+def edit_post(id, post_md):
+    post_obj = create_post_obj(post_md)
+    title = post_md.metadata.get("title")
     try:
         res = wp.call(EditPost(id, post_obj))
         log.info(f'更新文章成功：{title}，结果：{res}')
@@ -127,10 +118,8 @@ def edit_post(id, title, content, link, post_status, terms_names_post_tag, terms
 def read_md(file_path):
     with open(file_path, 'r', encoding='utf8') as f:
         post = frontmatter.load(f)
-        content = post.content
-        metadata = post.metadata
         log.info(f"post.metadata ===>> {post.metadata}")
-    return content, metadata
+    return post
 
 
 def get_md_list(dir_path):
@@ -183,19 +172,18 @@ def get_md_sha1_dic(file):
     return result
 
 
-def update_md_sha1_dict(sha1_dict, link, sha1_value):
-    sha1_dict[link] = {
+def update_md_sha1_dict(sha1_dict, slug, sha1_value):
+    sha1_dict[slug] = {
         "hash_value": sha1_value,
-        "link": link,
-        "encode_link": urllib.parse.quote(link, safe='').lower()
+        "slug": slug
     }
 
 
-def post_link_id_list_2_link_id_dic(post_link_id_list):
-    link_id_dic = {}
-    for post in post_link_id_list:
-        link_id_dic[post["link"]] = post["id"]
-    return link_id_dic
+def post_slug_id_list_2_slug_id_dic(post_slug_id_list):
+    slug_id_dic = {}
+    for post in post_slug_id_list:
+        slug_id_dic[post["slug"]] = post["id"]
+    return slug_id_dic
 
 
 def href_info(link):
@@ -212,7 +200,7 @@ def parse_dir(path, base_path, name):
 
 
 # 在README.md中插入信息文章索引信息，更容易获取google的收录
-def insert_index_info_in_readme(link_id_dic):
+def insert_index_info_in_readme():
     # 获取_posts下所有markdown文件
     md_list = get_md_list(POST_PATH)
     # 生成插入列表
@@ -233,11 +221,10 @@ def insert_index_info_in_readme(link_id_dic):
                 insert_info = f'{insert_info}### {d1}{os.linesep * 2}'
             mds.sort(reverse=True)
             for md in mds:
-                (content, metadata) = read_md(md)
-                title = metadata.get("title", "")
-                link = title
-                url = post_url(link_id_dic[link])
-                insert_info = f'{insert_info}[{title}]({url}){os.linesep * 2}'
+                post_md = read_md(md)
+                title = post_md.metadata.get("title", "")
+                slug = title
+                insert_info = f'{insert_info}[{title}]({post_url(slug)}){os.linesep * 2}'
         insert_info = f'{insert_info}{os.linesep * 2}'
 
     # 替换 ---start--- 到 ---end--- 之间的内容
@@ -259,8 +246,8 @@ def insert_index_info_in_readme(link_id_dic):
 
 def main():
     # 1. 获取网站数据库中已有的文章列表
-    post_link_id_list = get_posts()
-    link_id_dic = post_link_id_list_2_link_id_dic(post_link_id_list)
+    post_slug_id_list = get_posts()
+    link_id_dic = post_slug_id_list_2_slug_id_dic(post_slug_id_list)
     # 2. 获取md_sha1_dic
     # 查看目录下是否存在md_sha1.txt,如果存在则读取内容；
     # 如果不存在则创建md_sha1.txt,内容初始化为{}，并读取其中的内容；
@@ -275,61 +262,39 @@ def main():
         # 计算md文件的sha1值，并与md_sha1_dic做对比
         sha1_value = get_sha1(md)
         # 读取md文件信息
-        (content, metadata) = read_md(md)
+        post_md = read_md(md)
         # 获取title
-        title = metadata.get("title", "")
+        slug = post_md.metadata.get("slug", "")
+        if not slug:
+            slug = post_md.metadata.get('title', '')
         # 如果sha1与md_sha1_dic中记录的相同，则打印：XX文件无需同步;
-        if ((title in md_sha1_dic.keys()) and
-                ("hash_value" in md_sha1_dic[title]) and
-                (sha1_value == md_sha1_dic[title]["hash_value"])):
+        if ((slug in md_sha1_dic.keys()) and
+                ("hash_value" in md_sha1_dic[slug]) and
+                (sha1_value == md_sha1_dic[slug]["hash_value"])):
             log.info(md + "无需同步")
         # 如果sha1与md_sha1_dic中记录的不同，则开始同步
         else:
-            # 读取md文件信息
-            (content, metadata) = read_md(md)
-            # 获取title
-            title = metadata.get("title", "")
-            terms_names_post_tag = metadata.get("tags", domain_name)
-            terms_names_category = metadata.get("categories", domain_name)
-            post_status = "publish"
-            link = title
-
-            content = markdown.markdown(content + href_info(post_url(link)), extensions=['tables', 'fenced_code'])
+            post_md.content = markdown.markdown(post_md.content + href_info(post_url(slug)),
+                                                extensions=['tables', 'fenced_code'])
             # 如果文章无id,则直接新建
-            if not (post_url(link) in link_id_dic.keys()):
-                post_id = new_post(title, content, link, post_status, terms_names_post_tag, terms_names_category)
-                log.info("new_post==>>", {
-                    "title": title,
-                    "content": content,
-                    "link": link,
-                    "post_status": post_status,
-                    "terms_names_post_tag": terms_names_post_tag,
-                    "terms_names_category": terms_names_category
-                })
+            if post_url(slug) not in link_id_dic.keys():
+                post_id = new_post(post_md)
+                log.info("new_post==>> ", post_md.metadata)
             # 如果文章有id, 则更新文章
             else:
                 # 获取id
-                id = link_id_dic[post_url(link)]
-                post_id = edit_post(id, title, content, link, post_status, terms_names_post_tag, terms_names_category)
-
-                log.info("edit_post==>>", {
-                    "id": id,
-                    "title": title,
-                    "content": content,
-                    "link": link,
-                    "post_status": post_status,
-                    "terms_names_post_tag": terms_names_post_tag,
-                    "terms_names_category": terms_names_category
-                })
+                id = link_id_dic[post_url(slug)]
+                post_id = edit_post(id, post_md)
+                log.info("edit_post==>> ", post_md.metadata)
 
             if post_id:
-                update_md_sha1_dict(md_sha1_dic, link, sha1_value)
-                link_id_dic[link] = post_id
+                update_md_sha1_dict(md_sha1_dic, slug, sha1_value)
+                link_id_dic[slug] = post_id
 
     # 4. 重建md_sha1_dic
     write_dic_info_to_file(md_sha1_dic, SHA1_PATH)
     # 5. 将链接信息写入insert_index_info_in_readme
-    insert_index_info_in_readme(link_id_dic)
+    insert_index_info_in_readme()
 
 
 main()
