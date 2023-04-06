@@ -66,7 +66,8 @@ def get_posts():
             "id": post.id,
             "link": unquote(post.link)
         })
-    log.info(f'获取服务器文章完成，共：{len(post_link_id_list)}，文章列表为：{post_link_id_list}')
+    log.info(f'获取服务器文章完成，共：{len(post_link_id_list)}')
+    log.info(posts[0])
     return post_link_id_list
 
 
@@ -138,7 +139,7 @@ def get_md_list(dir_path):
     md_l1 = glob.glob(f'{dir_path}/*/*.md')
     md_l2 = glob.glob(f'{dir_path}/*/*/*.md')
     md_list = md_l1 + md_l2
-    log.info(f'MD文章列表：{md_list}')
+    log.info(f'MD文章个数：{len(md_list)}')
     return md_list
 
 
@@ -154,7 +155,7 @@ def get_sha1(filename):
 # 将字典写入文件
 def write_dic_info_to_file(dic_info, file):
     dic_info["update_time"] = time.strftime('%Y-%m-%d-%H-%M-%S')
-    log.error(dic_info)
+    log.info(f'记录的文章列表为：{dic_info.keys()}')
     dic_info_str = json.dumps(dic_info)
     file = open(file, 'wt', encoding='utf8')
     file.write(dic_info_str)
@@ -183,11 +184,11 @@ def get_md_sha1_dic(file):
     return result
 
 
-def update_md_sha1_dict(sha1_dict, file_name, sha1_value):
-    sha1_dict[file_name] = {
+def update_md_sha1_dict(sha1_dict, link, sha1_value):
+    sha1_dict[link] = {
         "hash_value": sha1_value,
-        "file_name": file_name,
-        "encode_file_name": urllib.parse.quote(file_name, safe='').lower()
+        "link": link,
+        "encode_link": urllib.parse.quote(link, safe='').lower()
     }
 
 
@@ -250,14 +251,11 @@ def insert_index_info_in_readme(link_id_dic):
     with open(README_PATH, 'r', encoding='utf-8') as f:
         readme_md_content = f.read()
 
-    log.info(insert_info)
-
     if readme_md_content:
         new_readme_md_content = re.sub(r'---start---(.|\n)*---end---', insert_info, readme_md_content)
     else:
         new_readme_md_content = insert_info
 
-    log.info(f'new_readme_md_content: {new_readme_md_content}')
     with open(README_PATH, 'w', encoding='utf-8') as f:
         f.write(new_readme_md_content)
     return True
@@ -279,12 +277,15 @@ def main():
 
     for md in md_list:
         # 计算md文件的sha1值，并与md_sha1_dic做对比
-        file_name = os.path.basename(md).split(".")[0]
         sha1_value = get_sha1(md)
+        # 读取md文件信息
+        (content, metadata) = read_md(md)
+        # 获取title
+        title = metadata.get("title", "")
         # 如果sha1与md_sha1_dic中记录的相同，则打印：XX文件无需同步;
-        if ((file_name in md_sha1_dic.keys()) and
-                ("hash_value" in md_sha1_dic[file_name]) and
-                (sha1_value == md_sha1_dic[file_name]["hash_value"])):
+        if ((title in md_sha1_dic.keys()) and
+                ("hash_value" in md_sha1_dic[title]) and
+                (sha1_value == md_sha1_dic[title]["hash_value"])):
             log.info(md + "无需同步")
         # 如果sha1与md_sha1_dic中记录的不同，则开始同步
         else:
@@ -295,7 +296,7 @@ def main():
             terms_names_post_tag = metadata.get("tags", domain_name)
             terms_names_category = metadata.get("categories", domain_name)
             post_status = "publish"
-            link = file_name
+            link = title
 
             content = markdown.markdown(content + href_info(post_url(link)), extensions=['tables', 'fenced_code'])
             # 如果文章无id,则直接新建
@@ -326,7 +327,7 @@ def main():
                 })
 
             if post_id:
-                update_md_sha1_dict(md_sha1_dic, file_name, sha1_value)
+                update_md_sha1_dict(md_sha1_dic, link, sha1_value)
                 link_id_dic[link] = post_id
 
     # 4. 重建md_sha1_dic
