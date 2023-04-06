@@ -52,7 +52,7 @@ wp = Client(xmlrpc_php, username, password)
 
 
 def post_url(slug):
-    return f'https://{domain_name}/p/{slug}/'
+    return f'https://{domain_name}/p/{slug.strip()}/'
 
 
 # 获取已发布文章id列表
