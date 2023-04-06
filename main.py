@@ -67,7 +67,6 @@ def get_posts():
             "link": unquote(post.link)
         })
     log.info(f'获取服务器文章完成，共：{len(post_link_id_list)}')
-    log.info(posts[0])
     return post_link_id_list
 
 
