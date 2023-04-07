@@ -6,6 +6,8 @@
 
 [移动广告工作总结：SSP(媒体)](https://notlate.cn/p/056c86049135cef2/)
 
+[移动广告工作总结：ADX](https://notlate.cn/p/883c597a2c2ab576/)
+
 ### 03-Notes
 
 [计算广告-笔记16：其他广告相关技术](https://notlate.cn/p/9bd09124c3882b53/)
