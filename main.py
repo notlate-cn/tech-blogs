@@ -188,7 +188,7 @@ def update_md_sha1_dict(sha1_dict, slug, sha1_value):
 def post_slug_id_list_2_slug_id_dic(post_slug_id_list):
     slug_id_dic = {}
     for post in post_slug_id_list:
-        slug_id_dic[post["slug"]] = post["id"]
+        slug_id_dic[post["slug"].strip()] = post["id"]
     return slug_id_dic
 
 
@@ -283,15 +283,15 @@ def main():
             post_md.content = markdown.markdown(post_md.content + href_info(post_url(slug)),
                                                 extensions=['tables', 'fenced_code'])
             # 如果文章无id,则直接新建
-            if post_url(slug) not in link_id_dic.keys():
+            if slug.strip() not in link_id_dic.keys():
                 post_id = new_post(post_md)
-                log.info("new_post==>> ", post_md.metadata)
+                log.info(f"new_post==>> {post_md.metadata}")
             # 如果文章有id, 则更新文章
             else:
                 # 获取id
                 id = link_id_dic[post_url(slug)]
                 post_id = edit_post(id, post_md)
-                log.info("edit_post==>> ", post_md.metadata)
+                log.info(f"edit_post==>> {post_md.metadata}")
 
             if post_id:
                 update_md_sha1_dict(md_sha1_dic, slug, sha1_value)
