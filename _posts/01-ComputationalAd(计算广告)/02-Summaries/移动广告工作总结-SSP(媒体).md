@@ -2,8 +2,8 @@
 title: 移动广告工作总结：SSP(媒体)
 tags:
   - 计算广告
-  - 系统组成
-  - 工作总结
+  - SSP
+  - 供应方平台
 comments: true
 categories:
   - 计算广告
