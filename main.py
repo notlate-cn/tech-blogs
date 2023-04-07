@@ -283,13 +283,13 @@ def main():
             post_md.content = markdown.markdown(post_md.content + href_info(post_url(slug)),
                                                 extensions=['tables', 'fenced_code'])
             # 如果文章无id,则直接新建
-            if slug.strip() not in link_id_dic.keys():
+            if slug not in link_id_dic.keys():
                 post_id = new_post(post_md)
                 log.info(f"new_post==>> {post_md.metadata}")
             # 如果文章有id, 则更新文章
             else:
                 # 获取id
-                id = link_id_dic[post_url(slug)]
+                id = link_id_dic[slug]
                 post_id = edit_post(id, post_md)
                 log.info(f"edit_post==>> {post_md.metadata}")
 
