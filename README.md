@@ -1,5 +1,5 @@
 ---start---
-## 目录(2023年04月08日更新)
+## 目录(2023年04月09日更新)
 ## 01-ComputationalAd(计算广告)
 
 ### 02-Summaries
@@ -9,6 +9,8 @@
 [移动广告工作总结：DSP](https://notlate.cn/p/da092f688d333342/)
 
 [移动广告工作总结：ADX](https://notlate.cn/p/883c597a2c2ab576/)
+
+[机器学习需要弄清楚的知识点记录](https://notlate.cn/p/bae972c24d10482b/)
 
 ### 03-Notes
 
