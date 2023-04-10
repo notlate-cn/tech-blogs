@@ -28,7 +28,7 @@ ID类特征（比如用户ID）的特征取值上亿，即维度很高，若采�
 
 * 方法一：CityHash
 * 方法二：Frequency Hash，为了尽量减少损失，高频特征值保持原值，低频特征值进行hash映射降维
-* 方法三：Deep Hash Embedding，用Embedding技术把特征值离线向量化，训练模型时直接使用。方法来自谷歌2020年工作《[Learning to Embed Categorical Features without Embedding Tables for Recommendation-2020](https://arxiv.org/abs/2010.10784)》，也算是工业界最基本的做法
+* 方法三：[Deep Hash Embedding - 2020](https://arxiv.org/abs/2010.10784)，来自谷歌。总的来说就是：用$K$个hash函数把高维ID映射成$K(1024)$维向量，这是固定的不可训练的常量，也不需要存储。然后经过多层全连接学习出低维（32维）表示，替代One-Hot编码中的需要超大参数存储的查表（look-up）操作。不过缺点是推理性能要比查表慢很多。可以参考知乎文章《[推荐系统里，你是怎么Embedding的](https://zhuanlan.zhihu.com/p/397600084)》。
 
 ## 合约广告（Guaranteed Delivery）
 
