@@ -57,11 +57,21 @@ ID类特征（比如用户ID）的特征取值上亿，即维度很高，若采�
 
 ### 投放控制（Pacing）
 
-在线分配只能优化单次流量的投放，而从整体流量投放来看，往往不是最优的方案。比如广告主预算消耗过快或过慢，用户广告体验单一等问题
+在线分配只能优化单次流量的投放，而从整体流量投放来看，往往不是最优的方案。比如广告主预算消耗过快或过慢，用户广告体验单一等问题。投放控制主要有两个目标：
 
-* 方法一：经典的PID控制，建议先阅读文章**了解基础原理**《[PID控制算法原理（抛弃公式，从本质上真正理解PID控制）](https://zhuanlan.zhihu.com/p/39573490)》，然后再阅读Hulu技术博客**了解如何实战**《[第8期:广告流量匹配算法在Hulu/Disney Streaming平台的实战](https://mp.weixin.qq.com/s?__biz=MzA5NzQyNTcxMA==&mid=2656436132&idx=1&sn=0aedee0ea56550abbb867feeececa147&scene=19#wechat_redirect)》
+* 成本控制：控制广告主的平均（转化）成本不超过预期，或者是ROI（投资回报比）不超标
+* 预算控制：控制广告主的预算消耗速度，既不要过早消耗完，也不能消耗过慢，更不能超标。
 
-* 方法二：预算控制，建议阅读
+实现这个目标，通常只需要解决两个问题：
+
+* 要不要参与竞价？通过参竞率来控制广告投放速度
+* 出多少价？通过调整出价来控制竞胜率和投放速度，同时也可以把成本作为优化目标纳入考虑。
+
+解决这些问题的方法，最经典的非PID方法莫属。
+
+* 建议先阅读文章**了解基础原理**《[PID控制算法原理（抛弃公式，从本质上真正理解PID控制）](https://zhuanlan.zhihu.com/p/39573490)》，然后再阅读Hulu技术博客**了解如何实战**《[第8期:广告流量匹配算法在Hulu/Disney Streaming平台的实战](https://mp.weixin.qq.com/s?__biz=MzA5NzQyNTcxMA==&mid=2656436132&idx=1&sn=0aedee0ea56550abbb867feeececa147&scene=19#wechat_redirect)》
+
+* 建议阅读预算控制相关经典论文：
 
   《[Multiplicative Pacing Equilibria in Auction Markets - 2022](https://arxiv.org/abs/1706.07151)》
 
