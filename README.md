@@ -4,6 +4,8 @@
 
 ### 02-Summaries
 
+[Bid Landscape总结](https://notlate.cn/p/cff1ae52c7af5559/)
+
 [移动广告工作总结：SSP(媒体)](https://notlate.cn/p/056c86049135cef2/)
 
 [移动广告工作总结：DSP](https://notlate.cn/p/da092f688d333342/)
