@@ -12,6 +12,8 @@
 
 [机器学习需要弄清楚的知识点记录](https://notlate.cn/p/bae972c24d10482b/)
 
+[工作小结](https://notlate.cn/p/25047ddba9c42fcf/)
+
 ### 03-Notes
 
 [计算广告-笔记16：其他广告相关技术](https://notlate.cn/p/9bd09124c3882b53/)
