@@ -135,6 +135,8 @@ ID类特征（比如用户ID）的特征取值上亿，即维度很高，若采�
 
 * **多类目+多层次的图索引**
 
+#### 建议阅读本人笔记《[小红书推荐系统公开课学习笔记01-召回](https://notlate.cn/p/07689bd69c9a0a6f/)》
+
 ### 粗排（Pre-ranking）
 
 粗排的作用是继续筛选召回结果，输出百级物品给精排模块，因此同样需要高性能，但是本质上和精排模型是类似的。
@@ -165,7 +167,7 @@ ID类特征（比如用户ID）的特征取值上亿，即维度很高，若采�
 
 * 多目标优化：
 
-  [MMoE - 2018](https://dl.acm.org/doi/pdf/10.1145/3219819.3220007)：使模型在不同相关程度的多任务目标上获得较好泛化能力；尽量少的参数以保证性能
+  [MMoE - 2018](https://dl.acm.org/doi/pdf/10.1145/3219819.3220007)：使模型在不同相关程度的多任务目标上获得较好泛化能力；尽量少的参数以保证性能。但是存在极化问题，解决方案可阅读《[Recommending What Video to Watch Next: A Multitask Ranking System](https://daiwk.github.io/assets/youtube-multitask.pdf)》。
 
   [ESMM - 2018](https://dl.acm.org/doi/pdf/10.1145/3209978.3210104)：阿里提出的一种简单高效实用的方法，利用CTCVR和CTR的监督信息来训练网络，隐式地学习CVR，可以参考解读文章《[阿里CVR预估模型之ESMM](https://zhuanlan.zhihu.com/p/57481330)》
 
@@ -181,6 +183,8 @@ ID类特征（比如用户ID）的特征取值上亿，即维度很高，若采�
 
   《[Sequence-Aware Recommendation with Long-Term and Short-Term Attention Memory Networks - 2019](http://www.global-optimization.com/boyuan/Mypaper/MDM-2019.pdf)》
 
+#### 建议阅读本人笔记《[小红书推荐系统公开课学习笔记02-排序](https://notlate.cn/?p=304)》
+
 ### 重排（Re-ranking）
 
 推荐系统中排序常用的优化目标或损失函数定义方式有三种：Point Wise、Pair Wise和List Wise。
@@ -195,11 +199,13 @@ List Wise方式更关注整个列表中物品的顺序关系来优化模型。�
 
 《[Learning a Deep Listwise Context Model for Ranking Refinement - 2018](https://dl.acm.org/doi/pdf/10.1145/3209978.3209985)》
 
+#### 建议阅读本人笔记《[小红书推荐系统公开课学习笔记05-重排](https://notlate.cn/p/eb73eb0901934624/)》
+
 ### [投放控制](#投放控制（Pacing）)（Pacing）
 
 ### 市场竞价预估（Bidding Landscape）
 
-在二价交易机制下实时预估每一次交易市场价格的分布。
+在二价交易机制下实时预估每一次交易市场价格的分布。可以参考本人简单总结的文章《[Bid Landscape总结](https://notlate.cn/p/cff1ae52c7af5559/)》。
 
 * 启发式函数假设
 
