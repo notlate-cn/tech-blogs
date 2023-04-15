@@ -62,6 +62,8 @@
 
 [推荐系统-总结01：推荐算法发展里程碑](https://notlate.cn/p/9e23100d848390f4/)
 
+[小红书推荐系统公开课学习笔记01-召回](https://notlate.cn/p/07689bd69c9a0a6f/)
+
 
 
 ## 03-MachineLearning(机器学习)
