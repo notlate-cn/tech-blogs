@@ -62,6 +62,16 @@
 
 [推荐系统-总结01：推荐算法发展里程碑](https://notlate.cn/p/9e23100d848390f4/)
 
+[小红书推荐系统公开课学习笔记06-冷启动](https://notlate.cn/p/3af1eb0c0612632c/)
+
+[小红书推荐系统公开课学习笔记05-重排](https://notlate.cn/p/eb73eb0901934624/)
+
+[小红书推荐系统公开课学习笔记04-行为序列](https://notlate.cn/p/773215a847ca8a36/)
+
+[小红书推荐系统公开课学习笔记03-特征交叉](https://notlate.cn/p/16fca92af3f530cf/)
+
+[小红书推荐系统公开课学习笔记02-排序](https://notlate.cn/p/006d8316b498cd6e/)
+
 [小红书推荐系统公开课学习笔记01-召回](https://notlate.cn/p/07689bd69c9a0a6f/)
 
 
