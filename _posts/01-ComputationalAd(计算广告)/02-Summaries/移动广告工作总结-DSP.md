@@ -250,7 +250,7 @@ List Wise方式更关注整个列表中物品的顺序关系来优化模型。�
 
 * Isotonic Regression - 2002，保序回归，又叫PAV算法，大致方法是先分桶，再把逆序的桶合并成均值桶，建议阅读文章《[使用 Isotonic Regression 校准分类器](http://vividfree.github.io/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/2015/12/21/classifier-calibration-with-isotonic-regression)》
 
-* [Facebook公式校准 - 2014](https://github.com/wzhe06/Ad-papers/blob/master/Classic%20CTR%20Prediction/%5BGBDT%2BLR%5D%20Practical%20Lessons%20from%20Predicting%20Clicks%20on%20Ads%20at%20Facebook%20(Facebook%202014).pdf)，一个很简单的校准公式，$q=\frac{p}{p+(1-p)/w}$，其中$p$是预测值，$w$是校准系数，$q$是校准后的值。在实际应用中，$q$和$p$都是已知的，所以可比较简单的通过检索的方式找到符合要求的校准系数供在线使用。
+* [Facebook公式校准 - 2014](https://github.com/wzhe06/Ad-papers/blob/master/Classic%20CTR%20Prediction/%5BGBDT%2BLR%5D%20Practical%20Lessons%20from%20Predicting%20Clicks%20on%20Ads%20at%20Facebook%20(Facebook%202014).pdf)，一个很简单的校准公式，$q=\frac{p}{p+(1-p)/w}$，其中$p$是预测值，$w$是校准系数，$q$是校准后的值。在实际应用中，$q$和$p$都是已知的，所以可比较简单的通过检索的方式找到符合要求的校准系数供在线使用。建议阅读《[面向稀有事件的 Logistic Regression 模型校准](http://vividfree.github.io/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/2015/12/15/model-calibration-for-logistic-regression-in-rare-events-data)》。
 * Smoothed Isotonic Regression - 2020，保序回归平滑校准算法，结合了Binning、Isotonic Regression和线性Scaling方法。大致方法是先分桶，对逆序桶合并成小桶，然后使用scaling系数提拉。
 * Bayes-SIR - 2020，引入贝叶斯平滑思想，对不置信的后验CTR做贝叶斯平滑，解决冷启动问题
 * [PCCEM - 2020](https://github.com/tangxyw/RecSysPapers/blob/main/Calibration/Calibrating%20User%20Response%20Predictions%20in%20Online%20Advertising.pdf)，后链路预估值校准，本方法和SIR一起提出，主要解决面临数据稀疏和延迟转化问题的模型校准。主要思路是构建用户点击后的短期行为（如浏览、停留时长等）与后链路指标之间的关系来预测用户长期的转化行为
