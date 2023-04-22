@@ -1,8 +1,10 @@
 ---start---
-## 目录(2023年04月20日更新)
+## 目录(2023年04月22日更新)
 ## 01-ComputationalAd(计算广告)
 
 ### 02-Summaries
+
+[详解先验校准](https://notlate.cn/p/71241fe2e765239a/)
 
 [Bid Landscape总结](https://notlate.cn/p/cff1ae52c7af5559/)
 
