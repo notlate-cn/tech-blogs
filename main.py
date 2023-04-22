@@ -122,6 +122,19 @@ def read_md(file_path):
     return post
 
 
+def is_finished(metadata):
+    if metadata and 'status' in metadata:
+        return str(metadata.get('status')).lower() == 'true'
+    return True
+
+
+def update_slug(metadata):
+    title = metadata.get("title")
+    slug = title_to_abbrlink(title)
+    metadata['slug'] = slug
+    return metadata
+
+
 def get_md_list(dir_path):
     log.info(f'正在获取本地MD文件列表：{dir_path} ...')
     md_l1 = glob.glob(f'{dir_path}/*/*.md')
@@ -265,14 +278,20 @@ def main():
     md_list = get_md_list(POST_PATH)
 
     for md in md_list:
-        # 计算md文件的sha1值，并与md_sha1_dic做对比
-        sha1_value = get_sha1(md)
         # 读取md文件信息
         post_md = read_md(md)
-        # 获取title
         title = post_md.metadata.get("title")
+
+        if not is_finished(post_md.metadata):
+            log.info(f'{title} 尚未完成，跳过。')
+            continue
+
+        # 更新文章的slug
         slug = title_to_abbrlink(title)
         post_md.metadata['slug'] = slug
+
+        # 计算md文件的sha1值，并与md_sha1_dic做对比
+        sha1_value = get_sha1(md)
         # 如果sha1与md_sha1_dic中记录的相同，则打印：XX文件无需同步;
         if ((slug in md_sha1_dic.keys()) and
                 ("hash_value" in md_sha1_dic[slug]) and
