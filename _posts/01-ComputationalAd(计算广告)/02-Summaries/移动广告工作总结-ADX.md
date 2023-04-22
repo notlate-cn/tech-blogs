@@ -69,6 +69,11 @@ date: 2023-03-13 21:15:22
 * 背景介绍：通常DSP与广告主均采用二价计费，因为这种方式简单易解释且为占优策略。但是ADX向DSP计费时，多数采用基于二价的改进策略，并非完全二价计费，这是由DSP的盈利模式决定的，尤其是采用套利模式的DSP，更容易出更低的价。试想某一ADX其市场竞争不激烈，可能最高价和次高价相差很大，若抬高低价，则可能只有1家DSP出价，甚至没有DSP参与。所以也就是出价和计费价差距非常大，导致媒体和ADX的收益大大受损。
 * 应对策略：在设置较低底价的同时，动态设置计费比例(0~1)。即若DSP出价，则在**二价**（可能不存在）和**出价\*计费比例**两者中寻找最大值作为计费价，需确保最大值不超过上限阈值，不低于底价即可。
 
+建议阅读：
+
+* [An Efficient Deep Distribution Network for Bid Shading in First-Price Auctions - 2021](https://arxiv.org/abs/2107.06650)
+* [Adaptive Bid Shading Optimization of First-Price Ad Inventory - 2021](https://ieeexplore.ieee.org/document/9482665)
+
 ## 流控
 
 ### 智能流控
