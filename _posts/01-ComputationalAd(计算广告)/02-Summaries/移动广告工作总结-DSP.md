@@ -244,7 +244,7 @@ List Wise方式更关注整个列表中物品的顺序关系来优化模型。�
 
 相关阅读：
 
-《[Bid Landscape总结](https://notlate.cn/p/cff1ae52c7af5559/)》
+《[市场竞价预估（Bid Landscape）总结](https://notlate.cn/p/a7a3a81cb28cc06c/)》
 
 ### 竞价策略（Bidding Strategies）
 
