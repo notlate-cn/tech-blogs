@@ -1,14 +1,14 @@
 ---start---
-## 目录(2023年04月22日更新)
+## 目录(2023年04月25日更新)
 ## 01-ComputationalAd(计算广告)
 
 ### 02-Summaries
 
 [详解先验校准](https://notlate.cn/p/71241fe2e765239a/)
 
-[Bid Landscape总结](https://notlate.cn/p/cff1ae52c7af5559/)
+[市场竞价预估（Bid Landscape）总结](https://notlate.cn/p/a7a3a81cb28cc06c/)
 
-[移动广告工作总结：SSP(媒体)](https://notlate.cn/p/056c86049135cef2/)
+[移动广告工作总结：媒体](https://notlate.cn/p/f994aaa04eb0f382/)
 
 [移动广告工作总结：DSP](https://notlate.cn/p/da092f688d333342/)
 
